@@ -8,6 +8,9 @@ index.local.html
 # Cloudflare Pages staging folder — built fresh on every deploy
 dist/
 
+# Wrangler cache
+.wrangler/
+
 # Dependencies
 node_modules/
 
