@@ -1,0 +1,19 @@
+# Claude internal state
+memory/
+.claude/
+
+# Local copy with secrets — never commit
+index.local.html
+
+# Dependencies
+node_modules/
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
