@@ -1,21 +1,33 @@
 #!/usr/bin/env bash
-# Cloudflare Pages build step.
-# Replaces the SHEET_WEBHOOK_URL placeholder in index.html with the value
-# from the SHEET_WEBHOOK_URL environment variable set in the Pages dashboard.
-# If the env var is missing, the placeholder stays — the site still loads,
-# but sheet submissions will fail with an obvious message.
+# Cloudflare Workers Static Assets build step.
+# Assembles a clean public/ folder that the Worker will serve, and injects
+# the real SHEET_WEBHOOK_URL from the environment variable configured in
+# the Cloudflare dashboard (Settings → Variables and Secrets).
 
 set -euo pipefail
 
-if [ -z "${SHEET_WEBHOOK_URL:-}" ]; then
-  echo "⚠  SHEET_WEBHOOK_URL env var not set — skipping injection."
-  echo "   Sheet submissions will not work on this deployment."
-  exit 0
+echo "→ Preparing public/ directory"
+rm -rf public
+mkdir -p public
+
+cp index.html public/index.html
+cp README.md public/README.md
+
+if [ -n "${SHEET_WEBHOOK_URL:-}" ]; then
+  # Escape sed metacharacters in the URL
+  ESCAPED=$(printf '%s\n' "$SHEET_WEBHOOK_URL" | sed -e 's/[\/&]/\\&/g')
+  sed -i "s|YOUR_APPS_SCRIPT_WEB_APP_URL_HERE|$ESCAPED|" public/index.html
+  echo "✓ Injected SHEET_WEBHOOK_URL into public/index.html"
+else
+  echo "⚠  SHEET_WEBHOOK_URL env var not set — placeholder remains."
+  echo "   Set it under Cloudflare Dashboard → Worker → Settings → Variables and Secrets."
 fi
 
-# Escape slashes and ampersands for sed
-ESCAPED=$(printf '%s\n' "$SHEET_WEBHOOK_URL" | sed -e 's/[\/&]/\\&/g')
+# Safety check: the real GEMINI_API_KEY must never end up in the built output.
+if grep -q 'AIzaSy' public/index.html; then
+  echo "✗ SAFETY STOP: public/index.html contains a Gemini API key — refusing to deploy." >&2
+  exit 1
+fi
 
-sed -i "s|YOUR_APPS_SCRIPT_WEB_APP_URL_HERE|$ESCAPED|" index.html
-
-echo "✓ Injected SHEET_WEBHOOK_URL into index.html"
+echo "✓ Build complete. Files in public/:"
+ls -la public/

@@ -5,8 +5,9 @@ memory/
 # Local copy with secrets — never commit
 index.local.html
 
-# Cloudflare Pages staging folder — built fresh on every deploy
+# Cloudflare staging folders — built fresh on every deploy
 dist/
+public/
 
 # Wrangler cache
 .wrangler/
