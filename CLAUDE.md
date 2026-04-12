@@ -33,24 +33,22 @@ py -m http.server    # falls back to 8000
 
 Read these sections in this order if you need to understand the flow:
 
-1. **`I18N` object** (~line 640) — contains everything user-facing in `en` and `ar`. All UI strings, all 5 questions, the `progress(cur,total)` formatter, `dir: "ltr|rtl"`. Adding a new piece of UI text means adding a key to **both** language objects.
-2. **`state` object** — `{ currentIndex, followUpsForCurrent, currentFollowUp, responses[] }`. `responses` is initialized from `t().questions` and rebuilt on language switch and on restart.
-3. **`renderQuestion()`** — the single render function. Branches on `state.currentFollowUp`: when truthy it shows the follow-up badge + accent border + `(Follow-up question)` prefix; otherwise the base question. Also flips the Next button label to `t().finishBtn` on the final base question.
-4. **`handleNext()`** — saves the answer, conditionally calls `evaluateFollowUp()` (gated by `FOLLOWUPS_ENABLED && state.followUpsForCurrent < MAX_FOLLOWUPS`), then either re-renders for a follow-up or advances `currentIndex`. End-of-list calls `finishInterview()`.
-5. **`evaluateFollowUp()`** — POSTs to Gemini 2.5 Flash. The prompt instructs Gemini to return either a single follow-up question or the literal word `NONE`. Errors are caught one level up in `handleNext` and gracefully degrade to "skip the follow-up, advance to next question."
-6. **`finishInterview()` → `submitToSheet()`** — fires a `no-cors` POST to `SHEET_WEBHOOK_URL` with a structured JSON payload (one `responses[]` entry per question, each with its own `followUps[]`). Because `no-cors` returns an opaque response, success is **assumed** if `fetch` doesn't throw.
-7. **i18n applier** — walks `[data-i18n]` and `[data-i18n-html]` attributes on each render/language change. The intro screen uses many of these with structured `g1Title`/`g1Body` pairs (post-redesign).
+1. **`I18N` object** — contains everything user-facing in `en` and `ar`. All UI strings, the `progress(cur,total)` formatter, `dir: "ltr|rtl"`. Adding a new piece of UI text means adding a key to **both** language objects.
+2. **`state` object** — `{ history: [], currentQuestion: "", done: false, lastAnalysis: null }`. `history` is an array of `{ question, answer }` pairs built up during the interview.
+3. **`generateNextQuestion()`** — POSTs to Gemini 2.5 Flash with the full conversation transcript. Gemini generates the next adaptive question or returns `"DONE"` when it has enough data. No predefined question list — every question is AI-generated.
+4. **`handleNext()`** — saves the answer to `state.history`, shows a loading skeleton, calls `generateNextQuestion()`, and either renders the next question or calls `finishInterview()` when done or `MAX_QUESTIONS` is reached.
+5. **`finishInterview()` → `submitToSheet()` + `generateAnalysis()`** — transitions to summary screen, fires sheet submission and AI analysis in parallel. Analysis results are saved to `state.lastAnalysis` and persisted to interview history.
+6. **`switchScreen(from, to, cb)`** — animated screen transition helper (350ms CSS opacity + transform). Replaces direct `.hidden` toggling.
+7. **Interview history** — completed interviews are saved to `localStorage.interviewHistory` (max 20, newest first). Users can view past transcripts in a modal and export as `.txt`.
+8. **i18n applier** — walks `[data-i18n]` and `[data-i18n-html]` attributes on each render/language change.
 
 ## Critical constants near the top of `<script>`
 
 ```js
 const GEMINI_API_KEY      // placeholder in index.html, real in index.local.html
 const SHEET_WEBHOOK_URL   // placeholder in index.html, real in index.local.html
-const FOLLOWUPS_ENABLED   // false by default — flip to true to re-enable Gemini follow-ups
-const MAX_FOLLOWUPS = 2   // hard cap per question, also enforced by Gemini prompt rules
+const MAX_QUESTIONS = 5   // AI wraps up around this many exchanges
 ```
-
-`FOLLOWUPS_ENABLED` is currently **off** because the free-tier Gemini key (20 req/min) was rate-limiting users mid-interview. When re-enabling, also consider adding 429 retry/backoff in `evaluateFollowUp()`.
 
 ## Google Sheets integration
 
@@ -60,8 +58,40 @@ The browser sends `Content-Type: text/plain` to avoid a CORS preflight; the Apps
 
 ## i18n + RTL conventions
 
-- Toggling language calls `setLang()` which rebuilds `state.responses` from the new question list and re-applies all `data-i18n` attributes.
+- Toggling language calls `applyLang()` which re-applies all `data-i18n` attributes and updates direction.
 - RTL layout is driven by `[dir="rtl"]` on `<html>`. Several CSS rules have RTL-specific overrides (search the stylesheet for `[dir="rtl"]`). When adding directional UI (borders, padding, arrow icons), add the matching RTL override.
+
+## Interview history
+
+- **localStorage key**: `interviewHistory` — JSON array of `{ id, date, language, questionCount, history, analysis }` objects
+- **Max 20 entries** — oldest are trimmed when cap is exceeded
+- **Functions**: `saveInterviewToHistory(analysis)`, `loadHistory()`, `renderHistoryList()`, `openHistoryModal(interview)`, `closeHistoryModal()`, `clearHistory()`
+- History section appears below the start button on the intro screen when entries exist
+- Past interviews open in a modal overlay with transcript and analysis
+
+## Export as text
+
+- `buildExportText(interview)` generates a plain-text transcript with header, Q&A pairs, and analysis sections
+- `downloadText(text, filename)` creates a Blob download
+- Available from both the summary screen (`#exportBtn`) and the history modal (`#modalExportBtn`)
+- Arabic exports include a UTF-8 BOM (`\uFEFF`) for Windows text editor compatibility
+
+## Screen transitions
+
+- `switchScreen(from, to, cb)` replaces direct `.hidden` toggling with a 350ms CSS opacity + translateY animation
+- Uses `.screen-exit` (fade up) and `.screen-enter` (fade in from below) CSS classes
+- Optional callback `cb` runs after the transition completes (e.g., `renderHistoryList`)
+
+## Loading skeleton
+
+- `#questionSkeleton` shows 3 shimmer bars during AI question generation
+- Replaces the typing dots indicator for the longer question-generation wait
+- CSS `@keyframes shimmer` animates a gradient sweep across the skeleton lines
+
+## Responsive breakpoints
+
+- `@media (max-width: 540px)` — reduced padding, smaller fonts, input-row stacks vertically (mic below textarea), topbar wraps
+- `@media (max-width: 380px)` — further size reductions for very small phones
 
 ## Verification workflow
 
@@ -69,6 +99,7 @@ Use the `preview_*` MCP tools, never spawn raw Bash for the dev server. After ed
 
 ## Known issues / footguns
 
-- **Don't reference `BASE_QUESTIONS`** — it was renamed to `t().questions`. A leftover reference here once silently froze the interview after Q1.
-- **Sheet submission cannot be confirmed from the browser** because `no-cors` returns an opaque response. The "Saved successfully" status is best-effort. If you need real confirmation, you'd have to switch the Apps Script to return CORS headers (`setHeader('Access-Control-Allow-Origin', '*')`) and drop `no-cors` mode.
-- **Free-tier Gemini quota is 20 req/min.** Re-enabling follow-ups without retry logic will reproduce the rate-limit error users hit before.
+- **No predefined questions** — the app uses adaptive AI-generated questions. There is no `BASE_QUESTIONS` or `t().questions` array. All questions come from `generateNextQuestion()`.
+- **Sheet submission cannot be confirmed from the browser** because `no-cors` returns an opaque response. The "Saved successfully" status is best-effort.
+- **Free-tier Gemini quota is 20 req/min.** Each interview uses ~6 Gemini calls (5 questions + 1 analysis). Back-to-back interviews may hit rate limits.
+- **`state.lastAnalysis`** must be set before `saveInterviewToHistory()` is called — this happens inside `generateAnalysis()` after the AI response is parsed.

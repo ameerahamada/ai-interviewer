@@ -270,6 +270,23 @@
   @media (max-width: 540px) {
     .meta-row { grid-template-columns: 1fr; }
     .intro-hero h1 { font-size: 24px; }
+    .app { padding: 20px 12px 60px; }
+    .card { padding: 24px 16px; }
+    h1 { font-size: 22px; }
+    .question-text { font-size: 17px; }
+    .input-row { flex-direction: column; }
+    .mic-btn { width: 100%; height: 44px; border-radius: 10px; margin-top: 0; }
+    .topbar { flex-wrap: wrap; gap: 8px; }
+    .theme-toggle { padding: 6px 10px; font-size: 13px; }
+    .guideline-item { padding: 12px; gap: 10px; }
+    .start-btn { padding: 14px 20px; font-size: 15px; }
+    .analysis-card { padding: 14px 16px; }
+    .modal-content { padding: 20px 16px; }
+  }
+  @media (max-width: 380px) {
+    .intro-hero h1 { font-size: 20px; }
+    .brand { font-size: 16px; }
+    .meta-pill { padding: 10px 12px; }
   }
   .btn {
     background: var(--accent);
@@ -335,36 +352,6 @@
     font-weight: 600;
     line-height: 1.5;
     margin-bottom: 6px;
-  }
-  .followup-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    font-weight: 700;
-    background: var(--accent);
-    color: #fff;
-    padding: 6px 12px;
-    border-radius: 999px;
-    margin-bottom: 14px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35);
-  }
-  .followup-tag::before {
-    content: "↳";
-    font-size: 14px;
-    font-weight: 900;
-  }
-  .question-text.is-followup {
-    border-left: 3px solid var(--accent);
-    padding-left: 14px;
-  }
-  [dir="rtl"] .question-text.is-followup {
-    border-left: none;
-    border-right: 3px solid var(--accent);
-    padding-left: 0;
-    padding-right: 14px;
   }
   textarea {
     width: 100%;
@@ -485,6 +472,230 @@
     margin-top: 14px;
     font-size: 14px;
   }
+
+  /* ---------- Voice input ---------- */
+  .input-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .input-row textarea { flex: 1; }
+  .mic-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: var(--surface-2);
+    color: var(--text-muted);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    font-size: 20px;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+    margin-top: 2px;
+  }
+  .mic-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .mic-btn.recording {
+    background: var(--error);
+    border-color: var(--error);
+    color: #fff;
+    animation: pulse-mic 1.2s infinite ease-in-out;
+  }
+  .mic-btn.unsupported { opacity: 0.3; cursor: not-allowed; }
+  @keyframes pulse-mic {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+    50% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
+  }
+
+  /* ---------- AI Analysis summary ---------- */
+  .analysis-section {
+    margin: 20px 0;
+  }
+  .analysis-card {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+  }
+  .analysis-card h3 {
+    margin: 0 0 10px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .analysis-card ul {
+    margin: 0;
+    padding-left: 18px;
+  }
+  .analysis-card li {
+    margin-bottom: 6px;
+    line-height: 1.55;
+    color: var(--text-muted);
+  }
+  .analysis-card li:last-child { margin-bottom: 0; }
+  .analysis-card p {
+    margin: 0;
+    line-height: 1.6;
+  }
+  .analysis-loading {
+    text-align: center;
+    padding: 30px 0;
+    color: var(--text-muted);
+    font-size: 15px;
+  }
+  .analysis-loading .typing-dots {
+    display: inline-flex;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+
+  /* ---------- Screen transitions ---------- */
+  .screen {
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .screen-exit {
+    opacity: 0;
+    transform: translateY(-12px);
+    pointer-events: none;
+  }
+  .screen-enter {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  /* ---------- Loading skeleton ---------- */
+  .skeleton { padding: 8px 0; }
+  .skeleton-line {
+    height: 16px;
+    margin-bottom: 12px;
+    background: linear-gradient(90deg, var(--surface-2) 25%, var(--border) 50%, var(--surface-2) 75%);
+    background-size: 200% 100%;
+    border-radius: 8px;
+    animation: shimmer 1.5s infinite ease-in-out;
+  }
+  .skeleton-line:last-child { margin-bottom: 0; }
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* ---------- Secondary button ---------- */
+  .btn-secondary {
+    background: transparent;
+    border: 2px solid var(--accent);
+    color: var(--accent);
+    padding: 10px 22px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+    font-family: inherit;
+  }
+  .btn-secondary:hover { background: var(--accent); color: #fff; }
+
+  /* ---------- History section ---------- */
+  .history-section {
+    margin-top: 28px;
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+  }
+  .history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .history-header h2 { margin: 0; }
+  .clear-history-btn {
+    background: none;
+    border: none;
+    color: var(--error);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background 0.2s;
+    font-family: inherit;
+  }
+  .clear-history-btn:hover { background: var(--error-bg); }
+  .history-list { display: flex; flex-direction: column; gap: 8px; }
+  .history-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s;
+  }
+  .history-item:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .history-item .h-info { flex: 1; }
+  .history-item .h-date { font-size: 14px; font-weight: 600; color: var(--text); }
+  .history-item .h-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .history-item .h-arrow { color: var(--text-muted); font-size: 18px; margin-left: 12px; }
+  [dir="rtl"] .history-item .h-arrow { margin-left: 0; margin-right: 12px; transform: scaleX(-1); }
+
+  /* ---------- Modal overlay ---------- */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .modal-content {
+    position: relative;
+    max-width: 640px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+  }
+  .modal-overlay.open .modal-content { transform: translateY(0); }
+  .modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    font-size: 18px;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: background 0.2s;
+  }
+  .modal-close:hover { background: var(--border); }
+  [dir="rtl"] .modal-close { right: auto; left: 14px; }
+  .modal-transcript { margin-top: 16px; }
+
   .hidden { display: none !important; }
 </style>
 </head>
@@ -499,7 +710,7 @@
     </div>
 
     <!-- INTRO -->
-    <div class="card" id="introScreen">
+    <div class="card screen" id="introScreen">
       <div class="intro-hero">
         <div class="intro-emoji" aria-hidden="true">🍔</div>
         <span class="intro-eyebrow" data-i18n="introEyebrow"></span>
@@ -567,10 +778,18 @@
         <span data-i18n="startBtn"></span>
         <span class="arrow" aria-hidden="true">→</span>
       </button>
+
+      <div class="history-section hidden" id="historySection">
+        <div class="history-header">
+          <h2 data-i18n="pastInterviews"></h2>
+          <button class="clear-history-btn" id="clearHistoryBtn" data-i18n="clearHistory"></button>
+        </div>
+        <div class="history-list" id="historyList"></div>
+      </div>
     </div>
 
     <!-- INTERVIEW -->
-    <div id="interviewScreen" class="hidden">
+    <div id="interviewScreen" class="screen hidden">
       <div class="progress-wrap">
         <div class="progress-header">
           <span id="progressLabel">Question 1 of 5</span>
@@ -580,15 +799,22 @@
       </div>
       <div class="card">
         <div class="question-block">
-          <div class="followup-tag hidden" id="followupTag"></div>
           <div class="question-text" id="questionText"></div>
         </div>
         <div id="typingIndicator" class="typing hidden">
           <div class="typing-dots"><span></span><span></span><span></span></div>
           <span id="typingText"></span>
         </div>
+        <div id="questionSkeleton" class="skeleton hidden">
+          <div class="skeleton-line" style="width:100%"></div>
+          <div class="skeleton-line" style="width:80%"></div>
+          <div class="skeleton-line" style="width:60%"></div>
+        </div>
         <div id="answerArea">
-          <textarea id="answerInput"></textarea>
+          <div class="input-row">
+            <textarea id="answerInput"></textarea>
+            <button class="mic-btn" id="micBtn" title="Voice input" aria-label="Voice input">🎙️</button>
+          </div>
           <div class="error-msg" id="errorMsg"></div>
           <div class="api-error hidden" id="apiError"></div>
           <div class="actions">
@@ -599,34 +825,36 @@
     </div>
 
     <!-- SUMMARY -->
-    <div id="summaryScreen" class="hidden">
+    <div id="summaryScreen" class="screen hidden">
       <div class="card">
         <h1 data-i18n="summaryTitle"></h1>
         <p data-i18n="summaryBody"></p>
         <div id="saveStatus" class="save-status hidden"></div>
-        <div id="summaryList"></div>
-        <div class="storage-note">
-          <h3 data-i18n="storageTitle"></h3>
-          <p style="margin:0 0 8px" data-i18n="storageIntro"></p>
-          <pre>{
-  "interviewId": "uuid-v4",
-  "topic": "Delivery app",
-  "createdAt": "2026-04-07T14:55:00Z",
-  "completed": true,
-  "responses": [
-    {
-      "questionId": 1,
-      "question": "...",
-      "answer": "...",
-      "followUps": [{ "question": "...", "answer": "..." }]
-    }
-  ]
-}</pre>
-          <p style="margin:8px 0 0" data-i18n-html="storageOutro"></p>
+        <div id="analysisArea">
+          <div class="analysis-loading" id="analysisLoading">
+            <div class="typing-dots"><span></span><span></span><span></span></div>
+            <span data-i18n="analysisLoading"></span>
+          </div>
+          <div id="analysisResult" class="analysis-section hidden"></div>
         </div>
-        <div class="actions" style="justify-content:flex-start; margin-top:20px">
+        <div class="actions" style="justify-content:flex-start; margin-top:20px; gap:10px; flex-wrap:wrap">
           <button class="btn" id="restartBtn" data-i18n="restartBtn"></button>
+          <button class="btn-secondary" id="exportBtn" data-i18n="exportText"></button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORY MODAL -->
+  <div class="modal-overlay hidden" id="historyModal">
+    <div class="modal-content">
+      <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
+      <h2 id="modalTitle"></h2>
+      <p id="modalMeta" style="color:var(--text-muted);font-size:14px"></p>
+      <div id="modalTranscript" class="modal-transcript"></div>
+      <div id="modalAnalysis"></div>
+      <div class="actions" style="justify-content:flex-start; margin-top:20px">
+        <button class="btn-secondary" id="modalExportBtn" data-i18n="exportText"></button>
       </div>
     </div>
   </div>
@@ -637,8 +865,7 @@ const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE";
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 // Optional: paste your Google Apps Script /exec URL to auto-save responses to a Google Sheet. See README.
 const SHEET_WEBHOOK_URL = "YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
-const FOLLOWUPS_ENABLED = false;
-const MAX_FOLLOWUPS = 2;
+const MAX_QUESTIONS = 5; // AI wraps up around this many exchanges
 
 const I18N = {
   en: {
@@ -648,7 +875,7 @@ const I18N = {
     lightMode: "Light mode",
     introEyebrow: "AI-powered user research",
     introTitle: "Delivery App User Interview",
-    introBody: "Hi! I'm an AI interviewer and I'd love to learn about your experience with food delivery apps. Your honest perspective helps us understand real user needs.",
+    introBody: "Hey there! I'm your AI interviewer — think of me as a friendly coach who wants to hear about your delivery app experiences. No pressure, just a quick chat!",
     metaDurationLabel: "Duration",
     metaDurationValue: "5–10 minutes",
     metaQuestionsLabel: "Questions",
@@ -666,92 +893,95 @@ const I18N = {
     g5Body: "Responses are processed via the Gemini API and stored only locally in your browser. Not shared with third parties.",
     startBtn: "Start interview",
     progress: (cur, total) => `Question ${cur} of ${total}`,
-    followupTag: "Follow-up question",
-    followupPrefix: "(Follow-up question) ",
     placeholder: "Type your answer here…",
     nextBtn: "Next",
     finishBtn: "Finish interview",
     typing: "Thinking…",
     emptyError: "Please type an answer before continuing — the field is empty.",
     apiErrorMsg: "Couldn't reach the AI service for a follow-up. Continuing with the next question.",
-    summaryTitle: "Thank you!",
-    summaryBody: "Your interview is complete. Here's a recap of everything you shared.",
+    summaryTitle: "Great job! 🎉",
+    summaryBody: "You nailed it! Here's what I picked up from our chat.",
     savingSheet: "Saving your responses to the sheet…",
-    savedSheet: "Responses saved to the sheet successfully.",
-    saveFailed: "Couldn't save to the sheet right now. Your answers are still shown below.",
-    storageTitle: "How to store multiple interviews",
-    storageIntro: "Each session can be stored as a JSON record with a unique ID, timestamp, topic, and the question/answer pairs (including follow-ups). Suggested schema:",
-    storageOutro: "For a few interviews, <code>localStorage</code> works (key: <code>interviews</code>, value: array of records). For larger volumes, use <strong>IndexedDB</strong> client-side, or push records to a backend store like Firestore, Supabase, or PostgreSQL with one row per interview and a JSONB <code>responses</code> column for flexible querying.",
+    savedSheet: "Responses saved successfully.",
+    saveFailed: "Couldn't save right now — no worries, your answers are safe.",
+    analysisLoading: "Putting together your personalized feedback…",
+    analysisSummary: "Summary",
+    analysisStrengths: "Key Strengths",
+    analysisImprovements: "Areas for Improvement",
+    analysisRecommendations: "Recommendations",
+    analysisError: "Couldn't generate AI feedback right now. Here's a summary of your answers instead.",
     restartBtn: "Start a new interview",
-    questions: [
-      "Tell me about the last meal you ordered through a delivery app — what exactly did you get?",
-      "What made you pick that specific restaurant over the other options shown in the app?",
-      "How did the food actually taste when you took your first bite at home?",
-      "Describe one specific moment during that order where the app itself annoyed or confused you.",
-      "What is the single thing you most wish that delivery app would do differently?"
-    ]
+    micListening: "Listening…",
+    micUnsupported: "Voice input not supported in this browser.",
+    pastInterviews: "Past Interviews",
+    clearHistory: "Clear history",
+    clearHistoryConfirm: "Are you sure? This will delete all saved interviews.",
+    historyQuestions: "questions",
+    exportText: "Download as Text",
+    noHistory: "No past interviews yet."
   },
   ar: {
     dir: "rtl",
     langToggle: "English",
     darkMode: "الوضع الداكن",
     lightMode: "الوضع الفاتح",
-    introEyebrow: "بحث المستخدمين بالذكاء الاصطناعي",
-    introTitle: "مقابلة مستخدم تطبيق التوصيل",
-    introBody: "مرحبًا! أنا مُحاوِر بالذكاء الاصطناعي، وأودّ التعرّف على تجربتك مع تطبيقات توصيل الطعام. وجهة نظرك الصادقة تساعدنا على فهم احتياجات المستخدمين الحقيقية.",
+    introEyebrow: "بحث بالذكاء الاصطناعي",
+    introTitle: "مقابلة عن تطبيقات التوصيل",
+    introBody: "هلا وغلا! أنا المحاور الذكي حقك — فكّر فيني كأني كوتش ودّي أسمع تجربتك مع تطبيقات التوصيل. بدون ضغط، مجرد سوالف سريعة!",
     metaDurationLabel: "المدة",
-    metaDurationValue: "٥–١٠ دقائق",
+    metaDurationValue: "٥–١٠ دقايق",
     metaQuestionsLabel: "الأسئلة",
     metaQuestionsValue: "٥ أسئلة مفتوحة",
-    guidelinesTitle: "قبل أن نبدأ",
+    guidelinesTitle: "قبل ما نبدأ",
     g1Title: "الصيغة",
-    g1Body: "حتى ٥ أسئلة مفتوحة، مع إمكانية وجود أسئلة متابعة.",
+    g1Body: "٥ أسئلة مفتوحة، وممكن أسئلة متابعة بسيطة.",
     g2Title: "المدة",
-    g2Body: "حوالي ٥ إلى ١٠ دقائق حسب ما تودّ مشاركته.",
-    g3Title: "لا توجد إجابات صحيحة أو خاطئة",
-    g3Body: "نريد فقط أن نسمع تجربتك الصادقة.",
-    g4Title: "الخروج في أي وقت",
-    g4Body: "يمكنك إغلاق هذه الصفحة متى شئت. لا تُرسَل أي بيانات إلا عند إرسال كل إجابة.",
-    g5Title: "أمان البيانات",
-    g5Body: "تُعالَج إجاباتك عبر واجهة Gemini وتُخزَّن محليًا في متصفحك فقط ولا تُشارَك مع أي طرف ثالث.",
-    startBtn: "ابدأ المقابلة",
+    g2Body: "تقريبًا ٥ لـ ١٠ دقايق على حسب كلامك.",
+    g3Title: "ما فيه إجابة غلط",
+    g3Body: "نبي نسمع تجربتك الصادقة بس.",
+    g4Title: "اطلع وقت ما تبي",
+    g4Body: "سكّر الصفحة وقت ما تبي. ما ينرسل شي إلا لما تضغط إرسال.",
+    g5Title: "أمان بياناتك",
+    g5Body: "إجاباتك تنحفظ في متصفحك بس ولا تنشارك مع أحد.",
+    startBtn: "يلا نبدأ",
     progress: (cur, total) => `السؤال ${cur} من ${total}`,
-    followupTag: "سؤال متابعة",
-    followupPrefix: "(سؤال متابعة) ",
     placeholder: "اكتب إجابتك هنا…",
     nextBtn: "التالي",
-    finishBtn: "إنهاء المقابلة",
-    typing: "جارٍ التفكير…",
-    emptyError: "يرجى كتابة إجابة قبل المتابعة — الحقل فارغ.",
-    apiErrorMsg: "تعذّر الوصول إلى خدمة الذكاء الاصطناعي لسؤال المتابعة. سننتقل إلى السؤال التالي.",
-    summaryTitle: "شكرًا لك!",
-    summaryBody: "اكتملت المقابلة. فيما يلي ملخّص لكل ما شاركته.",
-    savingSheet: "جارٍ حفظ إجاباتك في الجدول…",
-    savedSheet: "تم حفظ الإجابات في الجدول بنجاح.",
-    saveFailed: "تعذّر الحفظ في الجدول الآن. إجاباتك معروضة بالأسفل.",
-    storageTitle: "كيفية تخزين عدة مقابلات",
-    storageIntro: "يمكن تخزين كل جلسة كسجل JSON يحتوي على معرّف فريد، وطابع زمني، والموضوع، وأزواج الأسئلة والإجابات (مع أسئلة المتابعة). المخطط المقترح:",
-    storageOutro: "للعدد القليل من المقابلات، يكفي استخدام <code>localStorage</code> (المفتاح: <code>interviews</code>، والقيمة: مصفوفة من السجلات). للأحجام الأكبر، استخدم <strong>IndexedDB</strong> في المتصفح، أو أرسل السجلات إلى خدمة خلفية مثل Firestore أو Supabase أو PostgreSQL بصف واحد لكل مقابلة وعمود <code>responses</code> من نوع JSONB لمرونة الاستعلام.",
+    finishBtn: "خلّصنا",
+    typing: "أفكّر…",
+    emptyError: "اكتب شي قبل ما تكمل — الحقل فاضي.",
+    apiErrorMsg: "ما قدرت أوصل للذكاء الاصطناعي. بنكمل السؤال اللي بعده.",
+    summaryTitle: "يعطيك العافية! 🎉",
+    summaryBody: "أحسنت! هذي ملاحظاتي من سوالفنا.",
+    savingSheet: "جاري حفظ إجاباتك…",
+    savedSheet: "انحفظت الإجابات بنجاح.",
+    saveFailed: "ما قدرت أحفظ الحين — لا تقلق، إجاباتك موجودة.",
+    analysisLoading: "أجهّز لك ملاحظاتك الشخصية…",
+    analysisSummary: "الملخّص",
+    analysisStrengths: "نقاط القوة",
+    analysisImprovements: "نقاط التحسين",
+    analysisRecommendations: "التوصيات",
+    analysisError: "ما قدرت أحلّل الحين. هذي إجاباتك بشكل مختصر.",
     restartBtn: "ابدأ مقابلة جديدة",
-    questions: [
-      "حدّثني عن آخر وجبة طلبتها عبر تطبيق توصيل — ما الذي طلبته بالضبط؟",
-      "ما الذي جعلك تختار ذلك المطعم تحديدًا من بين الخيارات الأخرى المعروضة في التطبيق؟",
-      "كيف كان مذاق الطعام فعلًا عندما تذوّقته لأول مرة في المنزل؟",
-      "صِف لحظة محدّدة خلال ذلك الطلب أزعجك أو أربكك فيها التطبيق نفسه.",
-      "ما الشيء الواحد الذي تتمنى أكثر من غيره أن يفعله ذلك التطبيق بشكل مختلف؟"
-    ]
+    micListening: "أسمعك…",
+    micUnsupported: "المتصفح ما يدعم الإدخال الصوتي.",
+    pastInterviews: "المقابلات السابقة",
+    clearHistory: "مسح السجل",
+    clearHistoryConfirm: "متأكد؟ بيتم حذف كل المقابلات المحفوظة.",
+    historyQuestions: "أسئلة",
+    exportText: "تحميل كملف نصي",
+    noHistory: "ما فيه مقابلات سابقة."
   }
 };
 
 let currentLang = localStorage.getItem("lang") || "en";
 function t() { return I18N[currentLang]; }
 
-// State
+// State — adaptive conversation history
 const state = {
-  currentIndex: 0,
-  followUpsForCurrent: 0,
-  currentFollowUp: null,
-  responses: t().questions.map(q => ({ question: q, answer: "", followUps: [] }))
+  history: [],          // [{ question, answer }]
+  currentQuestion: "",  // the question currently displayed
+  done: false           // AI signals interview is complete
 };
 
 // Theme
@@ -787,17 +1017,10 @@ function applyLang(lang) {
     const key = el.getAttribute("data-i18n-html");
     if (t()[key] != null) el.innerHTML = t()[key];
   });
-  // Re-key responses to current language questions (preserve answers by index)
-  state.responses = t().questions.map((q, i) => ({
-    question: q,
-    answer: state.responses[i]?.answer || "",
-    followUps: state.responses[i]?.followUps || []
-  }));
   if (answerInput) answerInput.placeholder = t().placeholder;
   if (typingText) typingText.textContent = t().typing;
   // Re-render whichever screen is visible
   if (!interviewScreen.classList.contains("hidden")) renderQuestion();
-  if (!summaryScreen.classList.contains("hidden")) renderSummary();
 }
 langToggle.addEventListener("click", () => {
   applyLang(currentLang === "en" ? "ar" : "en");
@@ -810,7 +1033,6 @@ const summaryScreen = document.getElementById("summaryScreen");
 
 // Interview elements
 const questionText = document.getElementById("questionText");
-const followupTag = document.getElementById("followupTag");
 const answerInput = document.getElementById("answerInput");
 const errorMsg = document.getElementById("errorMsg");
 const apiError = document.getElementById("apiError");
@@ -820,33 +1042,66 @@ const typingText = document.getElementById("typingText");
 const answerArea = document.getElementById("answerArea");
 const progressFill = document.getElementById("progressFill");
 const progressLabel = document.getElementById("progressLabel");
+const questionSkeleton = document.getElementById("questionSkeleton");
+
+// Screen transition helper
+function switchScreen(from, to, cb) {
+  from.classList.add("screen-exit");
+  setTimeout(() => {
+    from.classList.add("hidden");
+    from.classList.remove("screen-exit");
+    to.classList.remove("hidden");
+    to.classList.add("screen-enter");
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => to.classList.remove("screen-enter"));
+    });
+    if (cb) cb();
+  }, 350);
+}
 
 // Initialize language (after elements exist)
 applyLang(currentLang);
 
-document.getElementById("startBtn").addEventListener("click", () => {
-  introScreen.classList.add("hidden");
-  interviewScreen.classList.remove("hidden");
+document.getElementById("startBtn").addEventListener("click", async () => {
+  switchScreen(introScreen, interviewScreen);
+  // Show skeleton while generating first question
+  answerArea.classList.add("hidden");
+  questionText.classList.add("hidden");
+  questionSkeleton.classList.remove("hidden");
+  typingIndicator.classList.add("hidden");
+  updateProgress();
+  try {
+    const firstQ = await generateNextQuestion();
+    state.currentQuestion = firstQ;
+  } catch (e) {
+    // Fallback to a default first question
+    state.currentQuestion = currentLang === "ar"
+      ? "قولي عن آخر مرة طلبت أكل من تطبيق توصيل — وش طلبت؟"
+      : "Tell me about the last time you ordered food from a delivery app — what did you get?";
+  }
+  questionSkeleton.classList.add("hidden");
+  questionText.classList.remove("hidden");
+  answerArea.classList.remove("hidden");
   renderQuestion();
 });
 
 document.getElementById("restartBtn").addEventListener("click", () => {
-  state.currentIndex = 0;
-  state.followUpsForCurrent = 0;
-  state.currentFollowUp = null;
-  state.responses = t().questions.map(q => ({ question: q, answer: "", followUps: [] }));
-  summaryScreen.classList.add("hidden");
-  introScreen.classList.remove("hidden");
+  state.history = [];
+  state.currentQuestion = "";
+  state.done = false;
+  state.lastAnalysis = null;
+  switchScreen(summaryScreen, introScreen, renderHistoryList);
 });
 
 function updateProgress() {
-  const total = t().questions.length;
-  const cur = Math.min(state.currentIndex + 1, total);
-  // Show fill based on the question the user is currently on, so the bar is visible from Q1.
-  progressFill.style.width = `${(cur / total) * 100}%`;
-  progressLabel.textContent = t().progress(cur, total);
+  const answered = state.history.length;
+  const cur = answered + 1; // current question number
+  const total = MAX_QUESTIONS;
+  const pct = Math.min((cur / total) * 100, 100);
+  progressFill.style.width = `${pct}%`;
+  progressLabel.textContent = t().progress(Math.min(cur, total), total);
   const countEl = document.getElementById("progressCount");
-  if (countEl) countEl.textContent = `${cur} / ${total}`;
+  if (countEl) countEl.textContent = `${Math.min(cur, total)} / ~${total}`;
 }
 
 function renderQuestion() {
@@ -858,20 +1113,12 @@ function renderQuestion() {
   answerInput.disabled = false;
   nextBtn.disabled = false;
 
-  if (state.currentFollowUp) {
-    followupTag.classList.remove("hidden");
-    followupTag.textContent = t().followupTag;
-    questionText.textContent = t().followupPrefix + state.currentFollowUp;
-    questionText.classList.add("is-followup");
-  } else {
-    followupTag.classList.add("hidden");
-    questionText.textContent = t().questions[state.currentIndex];
-    questionText.classList.remove("is-followup");
-  }
+  questionText.textContent = state.currentQuestion;
 
-  const isFinalBase = state.currentIndex === t().questions.length - 1;
-  nextBtn.textContent = (isFinalBase && !state.currentFollowUp) ? t().finishBtn : t().nextBtn;
-  if (!state.currentFollowUp) answerInput.value = "";
+  // Show "Finish" if we're near the end
+  const nearEnd = state.history.length >= MAX_QUESTIONS - 1;
+  nextBtn.textContent = nearEnd ? t().finishBtn : t().nextBtn;
+  answerInput.value = "";
   answerInput.focus();
 }
 
@@ -883,6 +1130,56 @@ answerInput.addEventListener("input", () => {
   }
 });
 
+// --- Voice input (Web Speech API) ---
+const micBtn = document.getElementById("micBtn");
+let recognition = null;
+let isRecording = false;
+
+if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SpeechRec();
+  recognition.continuous = false;
+  recognition.interimResults = true;
+
+  recognition.onstart = () => {
+    isRecording = true;
+    micBtn.classList.add("recording");
+    answerInput.placeholder = t().micListening || "Listening…";
+  };
+  recognition.onend = () => {
+    isRecording = false;
+    micBtn.classList.remove("recording");
+    answerInput.placeholder = t().placeholder;
+  };
+  recognition.onerror = () => {
+    isRecording = false;
+    micBtn.classList.remove("recording");
+    answerInput.placeholder = t().placeholder;
+  };
+  recognition.onresult = (e) => {
+    let transcript = "";
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      transcript += e.results[i][0].transcript;
+    }
+    answerInput.value = transcript;
+    answerInput.classList.remove("error");
+    errorMsg.classList.remove("show");
+  };
+
+  micBtn.addEventListener("click", () => {
+    if (isRecording) {
+      recognition.stop();
+    } else {
+      recognition.lang = currentLang === "ar" ? "ar-SA" : "en-US";
+      recognition.start();
+    }
+  });
+} else {
+  micBtn.classList.add("unsupported");
+  micBtn.title = t().micUnsupported || "Voice input not supported";
+  micBtn.addEventListener("click", () => {});
+}
+
 async function handleNext() {
   const answer = answerInput.value.trim();
   if (!answer) {
@@ -891,106 +1188,102 @@ async function handleNext() {
     errorMsg.classList.add("show");
     return;
   }
-  // Clear input before any awaits so the next render starts fresh
+  // Stop any active recording
+  if (isRecording && recognition) recognition.stop();
   answerInput.value = "";
 
-  // Save answer
-  const resp = state.responses[state.currentIndex];
-  if (state.currentFollowUp) {
-    resp.followUps.push({ question: state.currentFollowUp, answer });
-  } else {
-    resp.answer = answer;
-  }
+  // Save Q&A to history
+  state.history.push({ question: state.currentQuestion, answer });
 
-  // Show typing while we evaluate follow-up
+  // Show skeleton while AI generates next question
   answerArea.classList.add("hidden");
-  typingIndicator.classList.remove("hidden");
+  questionText.classList.add("hidden");
+  questionSkeleton.classList.remove("hidden");
 
-  let followUp = null;
-  if (FOLLOWUPS_ENABLED && state.followUpsForCurrent < MAX_FOLLOWUPS) {
-    try {
-      followUp = await evaluateFollowUp(resp);
-    } catch (err) {
-      console.error(err);
-      // Don't block the user — gracefully skip follow-up on error
-      apiError.textContent = t().apiErrorMsg;
-      apiError.classList.remove("hidden");
+  try {
+    const nextQ = await generateNextQuestion();
+    if (nextQ === "DONE" || state.history.length >= MAX_QUESTIONS) {
+      questionSkeleton.classList.add("hidden");
+      questionText.classList.remove("hidden");
+      answerArea.classList.remove("hidden");
+      finishInterview();
+      return;
     }
+    state.currentQuestion = nextQ;
+  } catch (err) {
+    console.error(err);
+    if (state.history.length >= 3) {
+      questionSkeleton.classList.add("hidden");
+      questionText.classList.remove("hidden");
+      answerArea.classList.remove("hidden");
+      finishInterview();
+      return;
+    }
+    state.currentQuestion = currentLang === "ar"
+      ? "قولي أكثر عن تجربتك مع التطبيق."
+      : "Tell me more about your experience with the app.";
+    apiError.textContent = t().apiErrorMsg;
+    apiError.classList.remove("hidden");
   }
 
-  typingIndicator.classList.add("hidden");
+  questionSkeleton.classList.add("hidden");
+  questionText.classList.remove("hidden");
   answerArea.classList.remove("hidden");
-
-  if (followUp) {
-    state.currentFollowUp = followUp;
-    state.followUpsForCurrent++;
-    renderQuestion();
-    return;
-  }
-
-  // Move to next base question
-  state.currentFollowUp = null;
-  state.followUpsForCurrent = 0;
-  state.currentIndex++;
-
-  if (state.currentIndex >= t().questions.length) {
-    finishInterview();
-  } else {
-    renderQuestion();
-  }
+  renderQuestion();
 }
 
-async function evaluateFollowUp(resp) {
-  const baseQ = resp.question;
-  const mainAnswer = resp.answer;
-  const followUpsSoFar = resp.followUps.map((f, i) =>
-    `Follow-up ${i + 1}: ${f.question}\nAnswer: ${f.answer}`
+async function generateNextQuestion() {
+  const transcript = state.history.map((h, i) =>
+    `Q${i + 1}: ${h.question}\nA${i + 1}: ${h.answer}`
   ).join("\n\n");
 
-  const langInstruction = currentLang === "ar"
-    ? "Write the follow-up question in Modern Standard Arabic."
-    : "Write the follow-up question in English.";
+  const questionCount = state.history.length;
+  const remaining = MAX_QUESTIONS - questionCount;
 
-  const prompt = `You are a qualitative user researcher conducting an interview about food delivery app experiences.
+  const langInst = currentLang === "ar"
+    ? "Write in Saudi Arabic dialect (casual, natural, not formal MSA). Example: 'وش الشي اللي ضايقك بالضبط؟'"
+    : "Write in casual, conversational English.";
 
-Original question: "${baseQ}"
-User's main answer: "${mainAnswer}"
-${followUpsSoFar ? "\nPrevious follow-ups in this question:\n" + followUpsSoFar : ""}
+  const prompt = `You are a smart AI interviewer conducting a qualitative user research interview about food delivery app experiences. You are like a friendly coach having a natural conversation.
 
-Decide whether the user's answer is vague, incomplete, or missing specifics that a researcher would naturally probe for. If yes, write ONE short, specific, open-ended follow-up question. If the answer is already substantive and clear, respond with the single word: NONE.
+Topic: Food delivery apps (ordering, choosing restaurants, food quality, app UX, delivery experience)
 
-Strict rules:
-- Do NOT ask leading questions or suggest possible answers.
-- Do NOT repeat or rephrase the original question.
-- Be specific (e.g. ask about the actual food, timing, app screen, or moment).
-- Maximum one short sentence.
-- ${langInstruction}
-- Output ONLY the follow-up question, or the word NONE. No preamble.`;
+${transcript ? "Conversation so far:\n\n" + transcript + "\n\n" : "This is the START of the interview. Ask the very first question.\n\n"}Questions asked so far: ${questionCount}
+Questions remaining: ~${remaining}
 
-  const body = {
-    contents: [{ parts: [{ text: prompt }] }],
-    generationConfig: { temperature: 0.6, maxOutputTokens: 120 }
-  };
+Your task:
+${remaining <= 0
+  ? "The interview has enough data. Respond with exactly: DONE"
+  : `Generate the NEXT single interview question. Rules:
+- Ask ONE short, clear, specific question (one sentence max)
+- Base your question on what the user said — dive deeper into interesting or vague points
+- Do NOT repeat or rephrase any previous question
+- Do NOT ask leading questions or suggest answers
+- Be specific (ask about actual food, a specific moment, a screen in the app, timing, emotions)
+- ${remaining <= 1 ? "This is the last question — make it a good closing question about what they'd change." : "Make the conversation feel natural and adaptive, not scripted."}
+- ${langInst}
+- Output ONLY the question text. No numbering, no preamble, no quotes.`}`;
 
   const res = await fetch(GEMINI_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body)
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { temperature: 0.7, maxOutputTokens: 1024 }
+    })
   });
   if (!res.ok) throw new Error(`Gemini API error: ${res.status}`);
   const data = await res.json();
   const text = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "";
-  if (!text || /^none\b/i.test(text)) return null;
-  // Strip surrounding quotes if any
-  return text.replace(/^["'`]|["'`]$/g, "").trim();
+  if (/^done$/i.test(text)) return "DONE";
+  return text.replace(/^["'`]|["'`]$/g, "").replace(/^\d+[\.\)]\s*/, "").trim();
 }
 
 function finishInterview() {
   progressFill.style.width = "100%";
-  interviewScreen.classList.add("hidden");
-  summaryScreen.classList.remove("hidden");
-  renderSummary();
+  switchScreen(interviewScreen, summaryScreen);
   submitToSheet();
+  generateAnalysis();
 }
 
 async function submitToSheet() {
@@ -1006,11 +1299,11 @@ async function submitToSheet() {
     language: currentLang,
     createdAt: new Date().toISOString(),
     completed: true,
-    responses: state.responses.map((r, i) => ({
+    responses: state.history.map((h, i) => ({
       questionId: i + 1,
-      question: r.question,
-      answer: r.answer,
-      followUps: r.followUps
+      question: h.question,
+      answer: h.answer,
+      followUps: []
     }))
   };
 
@@ -1032,25 +1325,97 @@ async function submitToSheet() {
   }
 }
 
-function renderSummary() {
-  const list = document.getElementById("summaryList");
-  list.innerHTML = "";
-  const qLabel = currentLang === "ar" ? "س" : "Q";
-  state.responses.forEach((r, i) => {
-    const item = document.createElement("div");
-    item.className = "summary-item";
-    item.innerHTML = `
-      <div class="summary-q">${qLabel}${i + 1}. ${escapeHtml(r.question)}</div>
-      <div class="summary-a">${escapeHtml(r.answer)}</div>
-      ${r.followUps.map(f => `
-        <div class="summary-followup">
-          <div class="summary-q" style="font-size:14px">↳ ${escapeHtml(t().followupPrefix + f.question)}</div>
-          <div class="summary-a">${escapeHtml(f.answer)}</div>
-        </div>
-      `).join("")}
+async function generateAnalysis() {
+  const loading = document.getElementById("analysisLoading");
+  const result = document.getElementById("analysisResult");
+  loading.classList.remove("hidden");
+  result.classList.add("hidden");
+
+  // Build the interview transcript for the AI
+  const transcript = state.history.map((h, i) =>
+    `Q${i + 1}: ${h.question}\nAnswer: ${h.answer}`
+  ).join("\n\n");
+
+  const langInst = currentLang === "ar"
+    ? "Respond entirely in Saudi Arabic dialect (casual, clear, not formal MSA)."
+    : "Respond in English.";
+
+  const prompt = `You are a friendly AI coach analyzing a user interview about food delivery app experiences.
+
+Here is the full interview transcript:
+
+${transcript}
+
+Based on these answers, provide a structured analysis with exactly these 4 sections:
+
+1. **Summary**: A 2-3 sentence overview of the user's delivery app experience and perspective.
+2. **Key Strengths**: 2-3 bullet points about what the user values or does well as a delivery app customer (e.g. knows what they want, gives detailed feedback, tries different options).
+3. **Areas for Improvement**: 2-3 bullet points about pain points or challenges the user faces that could be addressed.
+4. **Recommendations**: 2-3 actionable suggestions tailored to this user's specific experience.
+
+${langInst}
+
+Format your response as JSON with this exact structure (no markdown, no code blocks, just raw JSON):
+{"summary":"...","strengths":["...","..."],"improvements":["...","..."],"recommendations":["...","..."]}`;
+
+  try {
+    if (GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE") throw new Error("No API key");
+
+    const res = await fetch(GEMINI_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { temperature: 0.7, maxOutputTokens: 2048 }
+      })
+    });
+    if (!res.ok) throw new Error(`API ${res.status}`);
+    const data = await res.json();
+    let raw = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "";
+    // Strip markdown code fences if present
+    raw = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "");
+    const analysis = JSON.parse(raw);
+    state.lastAnalysis = analysis;
+
+    loading.classList.add("hidden");
+    result.classList.remove("hidden");
+    result.innerHTML = `
+      <div class="analysis-card">
+        <h3>📋 ${escapeHtml(t().analysisSummary)}</h3>
+        <p>${escapeHtml(analysis.summary)}</p>
+      </div>
+      <div class="analysis-card">
+        <h3>💪 ${escapeHtml(t().analysisStrengths)}</h3>
+        <ul>${(analysis.strengths || []).map(s => `<li>${escapeHtml(s)}</li>`).join("")}</ul>
+      </div>
+      <div class="analysis-card">
+        <h3>🎯 ${escapeHtml(t().analysisImprovements)}</h3>
+        <ul>${(analysis.improvements || []).map(s => `<li>${escapeHtml(s)}</li>`).join("")}</ul>
+      </div>
+      <div class="analysis-card">
+        <h3>💡 ${escapeHtml(t().analysisRecommendations)}</h3>
+        <ul>${(analysis.recommendations || []).map(s => `<li>${escapeHtml(s)}</li>`).join("")}</ul>
+      </div>
     `;
-    list.appendChild(item);
-  });
+    saveInterviewToHistory(analysis);
+  } catch (err) {
+    console.error("Analysis failed:", err);
+    state.lastAnalysis = null;
+    loading.classList.add("hidden");
+    result.classList.remove("hidden");
+    const qLabel = currentLang === "ar" ? "س" : "Q";
+    result.innerHTML = `
+      <div class="analysis-card">
+        <h3>📋 ${escapeHtml(t().analysisSummary)}</h3>
+        <p style="color:var(--text-muted);font-size:13px;margin-bottom:12px">${escapeHtml(t().analysisError)}</p>
+        ${state.history.map((h, i) => `
+          <p><strong>${qLabel}${i + 1}.</strong> ${escapeHtml(h.question)}</p>
+          <p style="color:var(--text-muted)">${escapeHtml(h.answer)}</p>
+        `).join("")}
+      </div>
+    `;
+    saveInterviewToHistory(null);
+  }
 }
 
 function escapeHtml(s) {
@@ -1058,6 +1423,178 @@ function escapeHtml(s) {
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
   }[c]));
 }
+
+// --- Interview history (localStorage) ---
+const MAX_HISTORY = 20;
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem("interviewHistory")) || []; }
+  catch { return []; }
+}
+
+function saveInterviewToHistory(analysis) {
+  const list = loadHistory();
+  list.unshift({
+    id: (crypto.randomUUID && crypto.randomUUID()) || Date.now().toString(36),
+    date: new Date().toISOString(),
+    language: currentLang,
+    questionCount: state.history.length,
+    history: [...state.history],
+    analysis: analysis || null
+  });
+  if (list.length > MAX_HISTORY) list.length = MAX_HISTORY;
+  localStorage.setItem("interviewHistory", JSON.stringify(list));
+}
+
+function renderHistoryList() {
+  const section = document.getElementById("historySection");
+  const list = document.getElementById("historyList");
+  const items = loadHistory();
+  if (!items.length) { section.classList.add("hidden"); return; }
+  section.classList.remove("hidden");
+  list.innerHTML = items.map((item, idx) => {
+    const d = new Date(item.date);
+    const dateStr = d.toLocaleDateString(currentLang === "ar" ? "ar-SA" : "en-US", {
+      year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"
+    });
+    return `<div class="history-item" data-idx="${idx}">
+      <div class="h-info">
+        <div class="h-date">${escapeHtml(dateStr)}</div>
+        <div class="h-meta">${item.questionCount} ${escapeHtml(t().historyQuestions)} · ${item.language.toUpperCase()}</div>
+      </div>
+      <div class="h-arrow">›</div>
+    </div>`;
+  }).join("");
+  list.querySelectorAll(".history-item").forEach(el => {
+    el.addEventListener("click", () => openHistoryModal(items[+el.dataset.idx]));
+  });
+}
+
+// Modal
+const historyModal = document.getElementById("historyModal");
+let modalInterviewData = null;
+
+function openHistoryModal(interview) {
+  modalInterviewData = interview;
+  const d = new Date(interview.date);
+  const dateStr = d.toLocaleDateString(currentLang === "ar" ? "ar-SA" : "en-US", {
+    year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit"
+  });
+  document.getElementById("modalTitle").textContent = dateStr;
+  document.getElementById("modalMeta").textContent =
+    `${interview.questionCount} ${t().historyQuestions} · ${interview.language.toUpperCase()}`;
+
+  const qLabel = interview.language === "ar" ? "س" : "Q";
+  document.getElementById("modalTranscript").innerHTML = interview.history.map((h, i) => `
+    <div class="summary-item">
+      <div class="summary-q">${qLabel}${i + 1}. ${escapeHtml(h.question)}</div>
+      <div class="summary-a">${escapeHtml(h.answer)}</div>
+    </div>
+  `).join("");
+
+  const analysisEl = document.getElementById("modalAnalysis");
+  if (interview.analysis) {
+    const a = interview.analysis;
+    analysisEl.innerHTML = `
+      <div class="analysis-card"><h3>📋 ${escapeHtml(t().analysisSummary)}</h3><p>${escapeHtml(a.summary)}</p></div>
+      <div class="analysis-card"><h3>💪 ${escapeHtml(t().analysisStrengths)}</h3><ul>${(a.strengths||[]).map(s=>`<li>${escapeHtml(s)}</li>`).join("")}</ul></div>
+      <div class="analysis-card"><h3>🎯 ${escapeHtml(t().analysisImprovements)}</h3><ul>${(a.improvements||[]).map(s=>`<li>${escapeHtml(s)}</li>`).join("")}</ul></div>
+      <div class="analysis-card"><h3>💡 ${escapeHtml(t().analysisRecommendations)}</h3><ul>${(a.recommendations||[]).map(s=>`<li>${escapeHtml(s)}</li>`).join("")}</ul></div>
+    `;
+  } else {
+    analysisEl.innerHTML = "";
+  }
+
+  historyModal.classList.remove("hidden");
+  requestAnimationFrame(() => historyModal.classList.add("open"));
+}
+
+function closeHistoryModal() {
+  historyModal.classList.remove("open");
+  setTimeout(() => historyModal.classList.add("hidden"), 300);
+  modalInterviewData = null;
+}
+
+document.getElementById("modalClose").addEventListener("click", closeHistoryModal);
+historyModal.addEventListener("click", (e) => { if (e.target === historyModal) closeHistoryModal(); });
+
+document.getElementById("clearHistoryBtn").addEventListener("click", () => {
+  if (confirm(t().clearHistoryConfirm)) {
+    localStorage.removeItem("interviewHistory");
+    renderHistoryList();
+  }
+});
+
+// --- Export as text ---
+function buildExportText(interview) {
+  const lang = interview.language || "en";
+  const isAr = lang === "ar";
+  const d = new Date(interview.date);
+  const dateStr = d.toLocaleDateString(isAr ? "ar-SA" : "en-US", {
+    year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit"
+  });
+
+  let txt = "";
+  if (isAr) txt += "\uFEFF"; // UTF-8 BOM for Arabic
+  txt += `AI Interviewer — ${isAr ? "نص المقابلة" : "Transcript"}\n`;
+  txt += `${isAr ? "التاريخ" : "Date"}: ${dateStr}\n`;
+  txt += `${isAr ? "اللغة" : "Language"}: ${lang.toUpperCase()}\n`;
+  txt += `${isAr ? "الأسئلة" : "Questions"}: ${interview.questionCount}\n`;
+  txt += "================================\n\n";
+
+  const qLabel = isAr ? "س" : "Q";
+  const aLabel = isAr ? "ج" : "A";
+  interview.history.forEach((h, i) => {
+    txt += `${qLabel}${i + 1}: ${h.question}\n`;
+    txt += `${aLabel}${i + 1}: ${h.answer}\n\n`;
+  });
+
+  if (interview.analysis) {
+    const a = interview.analysis;
+    txt += "================================\n";
+    txt += `${isAr ? "التحليل" : "AI ANALYSIS"}\n`;
+    txt += "================================\n\n";
+    txt += `${isAr ? "الملخّص" : "Summary"}:\n${a.summary}\n\n`;
+    txt += `${isAr ? "نقاط القوة" : "Key Strengths"}:\n${(a.strengths||[]).map(s => `- ${s}`).join("\n")}\n\n`;
+    txt += `${isAr ? "نقاط التحسين" : "Areas for Improvement"}:\n${(a.improvements||[]).map(s => `- ${s}`).join("\n")}\n\n`;
+    txt += `${isAr ? "التوصيات" : "Recommendations"}:\n${(a.recommendations||[]).map(s => `- ${s}`).join("\n")}\n`;
+  }
+  return txt;
+}
+
+function downloadText(text, filename) {
+  const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// Export current interview from summary screen
+document.getElementById("exportBtn").addEventListener("click", () => {
+  const interview = {
+    date: new Date().toISOString(),
+    language: currentLang,
+    questionCount: state.history.length,
+    history: [...state.history],
+    analysis: state.lastAnalysis || null
+  };
+  const dateSlug = new Date().toISOString().slice(0, 10);
+  downloadText(buildExportText(interview), `interview-${dateSlug}.txt`);
+});
+
+// Export from modal
+document.getElementById("modalExportBtn").addEventListener("click", () => {
+  if (!modalInterviewData) return;
+  const dateSlug = new Date(modalInterviewData.date).toISOString().slice(0, 10);
+  downloadText(buildExportText(modalInterviewData), `interview-${dateSlug}.txt`);
+});
+
+// Initialize history on page load
+renderHistoryList();
 </script>
 </body>
 </html>
